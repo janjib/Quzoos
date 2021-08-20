@@ -11,10 +11,18 @@ import EndPage from "./components/EndPage";
 function App() {
   const [score, setScore] = useState(0);
   const [indexQuestions, setIndexQuestions] = useState(0);
+  const [playerName, setPlayerName] = useState("");
 
   return (
     <QuizContext.Provider
-      value={{ score, setScore, indexQuestions, setIndexQuestions }}
+      value={{
+        score,
+        setScore,
+        indexQuestions,
+        setIndexQuestions,
+        playerName,
+        setPlayerName,
+      }}
     >
       <AppContainer>
         <Router>
