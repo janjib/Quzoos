@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { QuizContext } from "../context/Context";
-import { questionsAndAnswer } from "../data/data";
-import { GrFormNext } from "react-icons/gr";
+// import questions
+import { collectionOfQuestions } from "../data/data";
 import {
   Button1,
   Caption1,
@@ -14,62 +14,111 @@ import {
 } from "../styles/styles";
 
 const QuestionPages = () => {
-  const errorMessage = "Please select an answer";
+  // enable useHistory()
   let history = useHistory();
+  // variable to store error message
+  const errorMessage = "Please select an answer";
+  // set answer selected by player
   const [answerChosen, setAnswerChosen] = useState("");
+  // control error
   const [error, setError] = useState({ isError: false, message: errorMessage });
-  const { score, setScore, indexQuestions, setIndexQuestions } =
+  // accessing states from context API
+  const { score, setScore, indexQuestions, setIndexQuestions, questionsSet } =
     useContext(QuizContext);
 
+  // triggered when player click the answer button
   const selectAnswer = (answer) => {
+    // set the answer clicked by player
     setAnswerChosen(answer);
   };
 
+  // triggered when player click the next question button
   const handleNextQuestions = () => {
+    // handle if player doesnt select an answer
     if (answerChosen === "") {
       setError({ ...error, isError: true, message: errorMessage });
       return;
     }
-    if (answerChosen === questionsAndAnswer[indexQuestions].answer) {
+    // check the answer chosen is correct or not
+    if (
+      answerChosen ===
+      collectionOfQuestions[questionsSet].questionsAndAnswer[indexQuestions]
+        .answer
+    ) {
+      // if correct, increment the mark
       setScore((prevScore) => prevScore + 1);
-      console.log(score);
     }
+    // Move to the next questions
     setIndexQuestions(indexQuestions + 1);
+    // reset answer chosen
     setAnswerChosen("");
+    // reset error to no error
     setError({ ...error, isError: false, message: errorMessage });
   };
 
   const handleEndQuiz = () => {
+    // handle if player doesnt select an answer
     if (answerChosen === "") {
       setError({ ...error, isError: true, message: errorMessage });
       return;
     }
-    if (answerChosen === questionsAndAnswer[indexQuestions].answer) {
+    // check the answer chosen is correct or not
+    if (
+      answerChosen ===
+      collectionOfQuestions[questionsSet].questionsAndAnswer[indexQuestions]
+        .answer
+    ) {
+      // if correct, increment the mark
       setScore((prevScore) => prevScore + 1);
-      console.log(score);
     }
+    // reset error to no error
     setError({ ...error, isError: false, message: errorMessage });
+    // Move to final page (all questions has been answered)
     history.push("/quzoos/endpage");
   };
 
   return (
     <>
-      <Caption1>{questionsAndAnswer[indexQuestions].question}</Caption1>
+      {/* Display Question */}
+      <Caption1>
+        {
+          collectionOfQuestions[questionsSet].questionsAndAnswer[indexQuestions]
+            .question
+        }
+      </Caption1>
       <ButtonChoiceGroup>
+        {/* Display All Answers */}
         <Button1 className="" onClick={() => selectAnswer("A")}>
-          {questionsAndAnswer[indexQuestions].optionA}
+          {
+            collectionOfQuestions[questionsSet].questionsAndAnswer[
+              indexQuestions
+            ].optionA
+          }
         </Button1>
         <Button1 className="" onClick={() => selectAnswer("B")}>
-          {questionsAndAnswer[indexQuestions].optionB}
+          {
+            collectionOfQuestions[questionsSet].questionsAndAnswer[
+              indexQuestions
+            ].optionB
+          }
         </Button1>
         <Button1 className="" onClick={() => selectAnswer("C")}>
-          {questionsAndAnswer[indexQuestions].optionC}
+          {
+            collectionOfQuestions[questionsSet].questionsAndAnswer[
+              indexQuestions
+            ].optionC
+          }
         </Button1>
         <Button1 className="" onClick={() => selectAnswer("D")}>
-          {questionsAndAnswer[indexQuestions].optionD}
+          {
+            collectionOfQuestions[questionsSet].questionsAndAnswer[
+              indexQuestions
+            ].optionD
+          }
         </Button1>
       </ButtonChoiceGroup>
       <ButtonAnswerGroup>
+        {/* Tell the player to select an answer */}
         {answerChosen !== "" ? (
           <Indicator>
             You choose : <Span1>{answerChosen}</Span1>
@@ -78,7 +127,9 @@ const QuestionPages = () => {
           <Indicator>{error.message}</Indicator>
         )}
 
-        {questionsAndAnswer.length - 1 === indexQuestions ? (
+        {/* Determine if last question.If yes, render endgame button. Otherwise, render next question button */}
+        {collectionOfQuestions[questionsSet].questionsAndAnswer.length - 1 ===
+        indexQuestions ? (
           <Button1 onClick={handleEndQuiz}>End Quiz</Button1>
         ) : (
           <Button1 onClick={handleNextQuestions}>
